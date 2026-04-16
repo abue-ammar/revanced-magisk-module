@@ -10,6 +10,7 @@ DL_SRCS=("direct" "archive" "apkmirror" "uptodown")
 if [ "${GITHUB_TOKEN-}" ]; then GH_HEADER="Authorization: token ${GITHUB_TOKEN}"; else GH_HEADER=; fi
 NEXT_VER_CODE=${NEXT_VER_CODE:-$(date +'%Y%m%d')}
 OS=$(uname -o)
+REQ_MAX_TIME=${REQ_MAX_TIME:-300}
 
 toml_prep() {
 	if [ ! -f "$1" ]; then return 1; fi
@@ -220,8 +221,11 @@ _req() {
 			return
 		fi
 	fi
-	if ! curl -L -c "$TEMP_DIR/cookie.txt" -b "$TEMP_DIR/cookie.txt" --connect-timeout 10 --retry 1 --fail -s -S "$@" "$ip" -o "$dlp"; then
+	if ! curl -L -c "$TEMP_DIR/cookie.txt" -b "$TEMP_DIR/cookie.txt" --connect-timeout 10 --max-time "$REQ_MAX_TIME" --retry 1 --fail -s -S "$@" "$ip" -o "$dlp"; then
 		epr "Request failed: $ip"
+		if [ "$dlp" != "-" ]; then
+			rm -f "$dlp"
+		fi
 		return 1
 	fi
 	if [ "$dlp" != - ]; then
