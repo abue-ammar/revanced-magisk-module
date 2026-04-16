@@ -213,7 +213,7 @@ _req() {
 	local ip="$1" op="$2"
 	shift 2
 	local dlp="$op"
-	if [ "$op" != - ]; then
+	if [ "$op" != "-" ]; then
 		if [ -f "$op" ]; then return; fi
 		dlp="$(dirname "$op")/tmp.$(basename "$op")"
 		if [ -f "$dlp" ]; then
@@ -228,7 +228,7 @@ _req() {
 		fi
 		return 1
 	fi
-	if [ "$dlp" != - ]; then
+	if [ "$dlp" != "-" ]; then
 		mv -f "$dlp" "$op"
 	fi
 }
